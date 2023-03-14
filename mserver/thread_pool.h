@@ -23,21 +23,21 @@ class ThreadPool {
     // 线程的数量
     int thread_num_;
     //  线程池数组，大小为thread_num
-    pthread_t threads_;
+    pthread_t *threads_;
 
     // 请求队列中最多允许的等待处理的请求数量
     int max_requests_;
 
     // 请求队列
-    std::List<T *> work_queue_;
+    std::list<T *> work_queue_;
 
-    // 互斥锁
+    // 保护请求队列的互斥锁
     Locker queue_locker_;
 
     // 信号量是用来判断是否有任务需要处理
     Sem queue_sta_;
 
-    // 是否结束
+    // 是否结束线程
     bool stop_;
 };
 

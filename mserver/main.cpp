@@ -17,6 +17,9 @@
 
 #define MAX_FD 65535
 #define MAX_EVENT_NUM 10000 // 一次监听的最大数量
+
+template class ThreadPool<HttpConn>;
+
 // 添加信号捕捉
 void AddSignal(int sig, void(handler(int))) {
     struct sigaction sa;
@@ -47,7 +50,7 @@ int main(int argc, char *argv[]) {
     }
 
     // 创建一个数组用于保存所有的客户端信息
-    HttpConn *user = new HttpConn[MAX_FD];
+    HttpConn *users = new HttpConn[MAX_FD];
 
     // 写网络代码
     int listen_fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -95,9 +98,32 @@ int main(int argc, char *argv[]) {
                     close(conn_fd);
                     continue;
                 }
+                // 将新客户的数据初始化，放到数组中
+                users[conn_fd].Init(conn_fd, client_address);
+            } else if (events[i].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) {
+                // 对方异常断开或错误等事件，此时应该关闭连接
+                users[sock_fd].CloseConn();
+            } else if (events[i].events & EPOLLIN) {
+                if (users[sock_fd].Read()) {
+                    // 一次性读完所有数据
+                    pool->append(users + sock_fd);
+                } else {
+                    // 读失败
+                    users[sock_fd].CloseConn();
+                }
+            } else if (events[i].events & EPOLLOUT) {
+                if (!users[sock_fd].Write()) {
+                    // 一次性写完所有数据
+                    users[sock_fd].CloseConn();
+                }
             }
         }
     }
+
+    close(epoll_fd);
+    close(listen_fd);
+    delete[] users;
+    delete pool;
 
     return 0;
 }

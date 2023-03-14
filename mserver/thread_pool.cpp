@@ -1,7 +1,11 @@
 #include "thread_pool.h"
+#include "http_conn.h"
+
 #include <cstdio>
 #include <exception>
 #include <pthread.h>
+
+template class ThreadPool<HttpConn>;
 
 template <typename T>
 ThreadPool<T>::ThreadPool(int thread_num, int max_request) : thread_num_(thread_num), max_requests_(max_request), stop_(false), threads_(nullptr) {
@@ -22,7 +26,7 @@ ThreadPool<T>::ThreadPool(int thread_num, int max_request) : thread_num_(thread_
             throw std::exception();
         }
 
-        pthread_detach(threads[i]) {
+        if (pthread_detach(threads_[i])) {
             delete[] threads_;
             throw std::exception();
         }
@@ -31,12 +35,13 @@ ThreadPool<T>::ThreadPool(int thread_num, int max_request) : thread_num_(thread_
 
 template <typename T>
 ThreadPool<T>::~ThreadPool() {
-    delelte[] threads_;
+    delete[] threads_;
     stop_ = true; // 停止状态
 }
 
 template <typename T>
 bool ThreadPool<T>::append(T *request) {
+    // 操作工作队列时一定要加锁，因为它被所有线程共享
     queue_locker_.lock();
     if (work_queue_.size() > max_requests_) {
         queue_locker_.unlock();
@@ -53,6 +58,7 @@ template <typename T>
 void *ThreadPool<T>::Worker(void *arg) {
     ThreadPool *pool = (ThreadPool *)arg;
     pool->Run();
+    return pool;
 }
 
 template <typename T>
@@ -72,6 +78,6 @@ void ThreadPool<T>::Run() {
             continue;
         }
 
-        request->process(); // 任务类
+        request->Process(); // 任务类
     }
 }

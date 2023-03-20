@@ -1,5 +1,5 @@
-#include "Socket.h"
-#include "InetAddress.h"
+#include "socket.h"
+#include "inet_address.h"
 #include "util.h"
 
 #include <fcntl.h>
@@ -23,7 +23,7 @@ Socket::~Socket() {
 }
 
 void Socket::Bind(InetAddress *addr) {
-    ErrIf(bind(fd_, (sockaddr *)&(addr->addr_), sizeof(addr->addr_len_) == -1), "socket bind error");
+    ErrIf(bind(fd_, (sockaddr *)&(addr->addr_), addr->addr_len_) == -1, "socket bind error");
 }
 
 void Socket::Listen() {

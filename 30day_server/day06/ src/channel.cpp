@@ -13,12 +13,12 @@ Channel::~Channel() {
 }
 
 void Channel::HandleEvent() {
-    loop->AddThread(callback);
+    loop_->AddThread(callback);
 }
 
 void Channel::EnableReading() {
     events_ = EPOLLIN | EPOLLET;
-    ep_->UpdateChannel(this);
+    loop_->UpdateChannel(this);
 }
 
 int Channel::get_fd() {
@@ -43,4 +43,8 @@ void Channel::set_in_poll() {
 
 void Channel::set_revents(uint32_t ev) {
     revents_ = ev;
-}     
+}
+
+void Channel::set_callback_(std::function<void()> cb) {
+    callback_ = cb;
+}

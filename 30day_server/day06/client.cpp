@@ -2,10 +2,11 @@
 
 #include <arpa/inet.h>
 #include <cstring>
+#include <iostream>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
+#define BUFFER_SIZE 2048
 int main() {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     ErrIf(sockfd == -1, "socket create error\n");
@@ -14,12 +15,12 @@ int main() {
     bzero(&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // 将IP地址的文本表示方式转换为符合套接字地址要求的格式
-    serv_addr.sin_port = htons(8889);
+    serv_addr.sin_port = htons(8886);
 
     // bind(sockfd, (sockaddr *)&serv_addr, sizeof(serv_addr)); // 客户端不进行bind操作
     ErrIf(connect(sockfd, (sockaddr *)&serv_addr, sizeof(serv_addr)) == -1, "socket connect error\n");
     while (true) {
-        char buf[1024];
+        char buf[BUFFER_SIZE];
         bzero(&buf, sizeof(buf));
         printf("please input text:\n");
         scanf("%s", buf);

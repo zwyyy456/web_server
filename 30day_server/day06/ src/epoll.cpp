@@ -1,6 +1,6 @@
-#include "epoll.h"
-#include "channel.h"
-#include "util.h"
+#include "../inc/epoll.h"
+#include "../inc/channel.h"
+#include "../inc/util.h"
 
 #include <cstring>
 #include <unistd.h>

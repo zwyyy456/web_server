@@ -12,6 +12,9 @@ class EventLoop {
     bool quit;
 
   public:
+    EventLoop();
+    ~EventLoop();
+
     void Loop();
     void UpdateChannel(Channel *);
 };

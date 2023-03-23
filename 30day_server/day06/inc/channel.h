@@ -1,5 +1,6 @@
 #pragma once
 #include "epoll.h"
+#include "event_loop.h"
 #include <cstdint>
 #include <functional>
 
@@ -16,7 +17,7 @@ class Channel {
     std::function<void()> callback_;
 
   public:
-    Channel(Epoll *ep, int fd);
+    Channel(EventLoop *loop, int fd);
     ~Channel();
 
     void HandleEvent();

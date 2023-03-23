@@ -2,7 +2,8 @@
 // #include "../inc/epoll.h"
 #include "vector"
 
-EventLoop::EventLoop() : ep_(nullptr), quit(false) {
+EventLoop::EventLoop() :
+    ep_(nullptr), quit(false) {
     ep_ = new Epoll();
 }
 
@@ -14,12 +15,12 @@ void EventLoop::Loop() {
     while (!quit) {
         std::vector<Channel *> chs;
         chs = ep_->Poll();
-        for (auto it = chs.begin(); it != chs.end(); ++it) {
-            (*it)->HandleEvent();
+        for (auto &ch : chs) {
+            ch->HandleEvent();
         }
     }
 }
 
 void EventLoop::UpdateChannel(Channel *ch) {
     ep_->UpdateChannel(ch);
-g
+}

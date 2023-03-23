@@ -2,18 +2,15 @@
 #include "../inc/epoll.h"
 
 #include <unistd.h>
-Channel::Channel(Epoll *ep, int fd) : ep_(ep), fd_(fd), events_(0), revents_(0), in_epoll_(false) {
+Channel::Channel(EventLoop *loop, int fd) :
+    loop_(loop), fd_(fd), events_(0), revents_(0), in_epoll_(false) {
 }
 
 Channel::~Channel() {
-    if (fd_ != -1) {
-        close(fd_);
-        fd_ = -1;
-    }
 }
 
 void Channel::HandleEvent() {
-    loop_->AddThread(callback);
+    callback_();
 }
 
 void Channel::EnableReading() {
@@ -45,6 +42,6 @@ void Channel::set_revents(uint32_t ev) {
     revents_ = ev;
 }
 
-void Channel::set_callback_(std::function<void()> cb) {
-    callback_ = cb;
+void Channel::set_callback_(std::function<void()> callback) {
+    callback_ = callback;
 }

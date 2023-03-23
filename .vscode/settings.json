@@ -61,6 +61,5 @@
         "typeinfo": "cpp"
     },
     "cmake.configureOnOpen": false,
-    "cmake.sourceDirectory": "${workspaceFolder}/proj_30day/code/day13/src",
     "git.ignoreLimitWarning": true
 }

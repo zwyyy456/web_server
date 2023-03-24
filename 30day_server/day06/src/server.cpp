@@ -23,7 +23,7 @@ Server::Server(EventLoop *loop) :
     loop_(loop) {
     // 初始化服务器
     Socket *serv_sock = new Socket();
-    InetAddress *serv_addr = new InetAddress("127.0.0.1", 8888);
+    InetAddress *serv_addr = new InetAddress("127.0.0.1", 8886);
     serv_sock->Bind(serv_addr);
     serv_sock->Listen();
     serv_sock->SetNonBlocking();
@@ -31,13 +31,12 @@ Server::Server(EventLoop *loop) :
     // Channel,用来表示不同的事件类型
     Channel *serv_channel = new Channel(loop_, serv_sock->get_fd());
     // bind，c++库函数
-    std::function<void()> callback = std::bind(&Server::NewConnenction, this, serv_sock);
+    std::function<void()> callback = [this, serv_sock] { NewConnenction(serv_sock); };
     serv_channel->set_callback_(callback);
     serv_channel->EnableReading();
 }
 
-Server::~Server() {
-}
+Server::~Server() = default;
 
 void Server::HandleReadEvent(int sockfd) {
     char buf[READ_BUF];
@@ -70,7 +69,7 @@ void Server::NewConnenction(Socket *serv_sock) {
     printf("new client fd %d! IP: %s Port: %d\n", clnt_sock->get_fd(), inet_ntoa(clnt_addr->addr_.sin_addr), ntohs(clnt_addr->addr_.sin_port));
     clnt_sock->SetNonBlocking();
     Channel *clnt_channel = new Channel(loop_, clnt_sock->get_fd());
-    std::function<void()> callback = std::bind(&Server::HandleReadEvent, this, clnt_sock->get_fd());
+    std::function<void()> callback = [this, capture0 = clnt_sock->get_fd()] { HandleReadEvent(capture0); };
     clnt_channel->set_callback_(callback);
     clnt_channel->EnableReading();
 }

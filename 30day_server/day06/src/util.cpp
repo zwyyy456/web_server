@@ -1,7 +1,7 @@
-#include "util.h"
+#include "../inc/util.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 void ErrIf(bool condition, const char *err_msg) {
     if (condition) {

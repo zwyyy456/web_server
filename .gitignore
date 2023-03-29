@@ -31,5 +31,9 @@
 *.out
 *.app
 
+# 屏蔽任意目录下的server, client
+**/server
+**/client
+
 # build
 build/

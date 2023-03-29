@@ -18,7 +18,7 @@ int main() {
     serv_addr.sin_port = htons(8886);
 
     // bind(sockfd, (sockaddr *)&serv_addr, sizeof(serv_addr)); // 客户端不进行bind操作
-    ErrIf(connect(sockfd, (sockaddr *)&serv_addr, sizeof(serv_addr)) == -1, "socket connect error\n");
+    ErrIf(connect(sockfd, reinterpret_cast<sockaddr *>(&serv_addr), sizeof(serv_addr)) == -1, "socket connect error\n");
     while (true) {
         char buf[BUFFER_SIZE];
         bzero(&buf, sizeof(buf));

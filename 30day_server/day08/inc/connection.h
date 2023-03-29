@@ -20,6 +20,6 @@ class Connection {
     Connection(EventLoop *loop, Socket *sock);
     ~Connection();
 
-    void echo(int sockfd);
+    void Echo(int sockfd);
     void set_delete_connection_callback_(std::function<void(Socket *)>);
 };

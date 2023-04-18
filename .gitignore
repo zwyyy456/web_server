@@ -34,6 +34,7 @@
 # 屏蔽任意目录下的server, client
 **/server
 **/client
+.cache/
 
 # build
 build/

@@ -2,7 +2,8 @@
 #include <mutex>
 #include <stdexcept>
 
-ThreadPool::ThreadPool(int size) {
+ThreadPool::ThreadPool(int size) :
+    stop_(false) {
     for (int i = 0; i < size; ++i) {
         threads_.emplace_back(std::thread([this]() {
             while (true) {
@@ -13,9 +14,10 @@ ThreadPool::ThreadPool(int size) {
                         return stop_ || !tasks_.empty();
                     });
                     if (stop_ && tasks_.empty()) {
-                        task = tasks_.front();
-                        tasks_.pop();
+                        return;
                     }
+                    task = tasks_.front();
+                    tasks_.pop();
                 }
                 task();
             }
